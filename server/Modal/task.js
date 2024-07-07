@@ -33,6 +33,7 @@ const taskSchema = new mongoose.Schema({
   }],
   roomId:{
     type: String,
+    default:"everyonecanuse"
   }
 });
 
