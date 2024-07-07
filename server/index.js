@@ -28,9 +28,26 @@ const client = new MongoClient(process.env.URL);
 
 app.use("/", authval)
 
-let objected={}
+let userSocketMap = new Map();
 io.on("connection", (socket) => {
     console.log(socket.id)
+
+    socket.on("user-connected", (user) =>{
+        console.log()
+        const userId = userData.id;
+        userSocketMap.set(userId, socket.id);
+        console.log(`User ${userId} connected with socket ${socket.id}`);
+    })
+    socket.on("disconnect", () => {
+       
+        for (let [userId, socketId] of userSocketMap.entries()) {
+            if (socketId === socket.id) {
+                userSocketMap.delete(userId);
+                console.log(`User ${userId} disconnected`);
+                break;
+            }
+        }
+    });
     socket.on("message", async (data) => {
         console.log(data, "this is data")
       
@@ -48,6 +65,7 @@ io.on("connection", (socket) => {
         const db = client.db("real");
         const collection = db.collection("chat");
         const newTask = {
+            userId:person.userid,
             title: parsedData.title,
             description: parsedData.description,
             createdDate: new Date(),
@@ -78,7 +96,10 @@ async function run() {
                 console.log("Insert detected:", fullDocument);
                 if(!fullDocument.everyone) {
                     fullDocument.assignedUsers.forEach((user) => {
-                        io.to(user.clientId).emit("message-recived", fullDocument);
+                        if(user.userId==userSocketMap[userId]){
+                            io.to(userSocketMap[userId]).emit("message-recived", fullDocument);
+                        }
+                       
                     });
                 }else{
                     io.emit("message-recived", fullDocument);
