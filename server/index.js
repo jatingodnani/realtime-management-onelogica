@@ -58,10 +58,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    console.log("Received data:", parsedData);
-    console.log("Title:", parsedData.title);
-    console.log("Description:", parsedData.description);
-    console.log("Assigned Users:", parsedData.assignedUsers);
+   
         const db = client.db("real");
         const collection = db.collection("chat");
         const newTask = {
@@ -76,6 +73,18 @@ io.on("connection", (socket) => {
           };
         await collection.insertOne(newTask);
         console.log('Task created:', newTask);
+    })
+    socket.on("task-update",async(id,data)=>{
+        try {
+            const result = await collection.updateOne(
+              { _id: new MongoClient.ObjectId(id) }, 
+              { $set: data }
+            );
+          } catch (error) {
+            console.error('Error updating task:', error);
+            socket.emit('update-error', 'An error occurred while updating the task');
+          }
+
     })
 })
 async function run() {
@@ -106,6 +115,8 @@ async function run() {
                 }
                 
             }
+
+            
         });
 
         server.listen(process.env.PORT, () => {
