@@ -31,7 +31,7 @@ io.on("connection", (socket) => {
   console.log(socket.id);
   // Manual Connection (For Server mapping)
   socket.on("user-connected", (user) => {
-    console.log();
+    console.log(user,"user");
     const userId = user.id;
     userSocketMap.set(userId, socket.id);
     console.log(`User ${userId} connected with socket ${socket.id}`);
@@ -91,12 +91,14 @@ io.on("connection", (socket) => {
     const db = client.db("real");
     const collection = db.collection("chat");
     try {
+     
+      const { _id, ...updateData } = data;
       const result = await collection.findOneAndUpdate(
         { _id: new ObjectId(id) },
-        { $set: data }
+        { $set: updateData }
       );
       console.log(result);
-    } catch (error) {
+    }  catch (error) {
       console.error("Error updating task:", error);
       socket.emit("update-error", "An error occurred while updating the task");
     }
@@ -116,8 +118,9 @@ async function run() {
       if (change.operationType === "insert") {
         const fullDocument = change.fullDocument;
 
-        console.log("Insert detected:", fullDocument);
+       
         if (!fullDocument.everyone) {
+          // console.log(fullDocument.assignedUsers,userSocketMap,fullDocument)
           fullDocument.assignedUsers.forEach((user) => {
             io.to(userSocketMap.get(user.clerkId)).emit(
               "message-recived",

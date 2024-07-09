@@ -17,7 +17,7 @@ const ModalForm = ({ isOpen, onClose, socket }) => {
   const [formData, setFormData] = useState({
     userId: user && user.id,
     email: user && user.emailAddresses[0].emailAddress,
-    name: user && user.firstName + ' ' + user.lastName,
+    name: user && user.firstName + ' ' + user?.lastName,
     title: '',
     description: '',
     assignTo: '',
@@ -119,6 +119,7 @@ const ModalForm = ({ isOpen, onClose, socket }) => {
                   className="h-[50px] mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   value={formData.assignTo}
                   onChange={handleChange}
+                  placeholder='Add multiple Users eMail using commas'
                 />
               </div>
               <div className="mb-4">
@@ -163,3 +164,4 @@ const ModalForm = ({ isOpen, onClose, socket }) => {
 };
 
 export default ModalForm;
+

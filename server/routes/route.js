@@ -76,4 +76,20 @@ router.get('/api/users', async (req, res) => {
   }
 });
 
+
+router.get("/api/userCreatedtask/:id", async (req, res) => {
+  const params = req.params;
+  console.log(params,"hiii")
+try{
+  const db = client.db("real");
+  const collection = db.collection("realtime-user");
+  const user =await collection.find({ userId:params.id}).toArray();;
+  console.log(user)
+  res.status(200).json(user);
+}catch(error){
+  console.error('Error fetching tasks:', error);
+  res.status(500).json({ error: 'An error occurred while fetching tasks' });
+}
+})
+
 module.exports = router;

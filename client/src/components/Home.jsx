@@ -4,6 +4,7 @@ import { SignIn, useAuth, useUser } from '@clerk/clerk-react';
 import { getAlltask, signInUser } from '../fetch/fetch';
 import ModalForm from './Createtask';
 import { useNavigate } from 'react-router-dom';
+import TaskTable from './TaskTable';
 
 function Home() {
   const { user } = useUser();
@@ -42,7 +43,7 @@ function Home() {
   }, [socket]);
 
   useEffect(() => {
-    if (user && user.id  && socket) {
+    if (user && socket) {
       socket.emit('user-connected', user);
     }
   }, [user, socket]);
@@ -60,17 +61,25 @@ function Home() {
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  if (!user) return <div className='flex w-full h-[80%] items-center justify-center'><SignIn /></div>;
+
 
   return (
-    <div style={{ backgroundImage: `url("/client/public/background.svg")` }}>
+    <div style={{ backgroundImage: `url("/client/public/background.svg")`  }} className="relative">
       <div className='w-full h-[5%] flex justify-between items-center'>
-        <button onClick={handleOpenModal} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Open Modal
+        <button onClick={handleOpenModal} className="bg-blue-500 absolute right-8 top-10  hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Add Task
         </button>
         <ModalForm isOpen={isModalOpen} onClose={handleCloseModal} socket={socket} />
       </div>
-     
+      <div className='mt-10'>
+        {
+          tasks.length>0 ? <TaskTable socket={socket}/> :<div className='w-full  flex-col justify-center items-center'>
+            <h1 className='font-semibold text-center' >NO TASK CREATED</h1>
+            <img src="../../public/Checklist.jpg" style={{width:"50%",height:"50%"}}/>
+          </div>
+        }
+    
+     </div>
     </div>
   );
 }
