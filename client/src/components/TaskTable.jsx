@@ -130,7 +130,7 @@ const TaskTable = ({ socket }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/task');
+        const response = await axios.get('https://realtime-management-onelogica.vercel.app/task');
         setData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);

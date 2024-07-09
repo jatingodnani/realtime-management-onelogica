@@ -19,7 +19,7 @@ function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const newSocket = io('http://localhost:8000');
+    const newSocket = io('https://realtime-management-onelogica.vercel.app');
     setSocket(newSocket);
 
     return () => newSocket.close();
