@@ -59,7 +59,7 @@ const ModalForm = ({ isOpen, onClose, socket }) => {
     console.log(signedinuser, newArr, updatedFormData.assignTo);
     socket.emit("message", updatedFormData);
 
-    // Close the modal and show toast notification
+   
     onClose();
     toast.success('Task created successfully!');
   };
@@ -118,7 +118,7 @@ const ModalForm = ({ isOpen, onClose, socket }) => {
                   type="text"
                   id="assignTo"
                   name="assignTo"
-                  className="h-[50px] pl-4 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="h-[50px]  mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   value={formData.assignTo}
                   onChange={handleChange}
                   placeholder='Add multiple Users eMail using commas'

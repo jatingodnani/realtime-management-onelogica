@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
-import { SignIn, useAuth, useUser } from '@clerk/clerk-react';
+import { SignIn, useAuth, useSession, useUser } from '@clerk/clerk-react';
 import { getAlltask, signInUser } from '../fetch/fetch';
 import ModalForm from './Createtask';
 import { useNavigate } from 'react-router-dom';
@@ -43,7 +43,8 @@ function Home() {
   }, [socket]);
 
   useEffect(() => {
-    if (user && socket) {
+    if(!socket) return;
+    if (user) {
       socket.emit('user-connected', user);
     }
   }, [user, socket]);

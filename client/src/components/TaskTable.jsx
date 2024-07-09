@@ -184,7 +184,7 @@ const TaskTable = ({ socket }) => {
     <>
       <audio ref={audioRef} src="/notification.mp3" />
       <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-      <table {...getTableProps()} className="flex-1 overflow-x-hidden min-w-full divide-y divide-gray-200">
+      <table {...getTableProps()} className="flex-1 min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>

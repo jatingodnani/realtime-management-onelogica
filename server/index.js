@@ -114,12 +114,13 @@ async function run() {
 
     // MONGO EVENT : CHANGE
     changeStream.on("change", async (change) => {
-      console.log("Change detected:", change);
+      // console.log("Change detected:", change);
       if (change.operationType === "insert") {
         const fullDocument = change.fullDocument;
 
        
         if (!fullDocument.everyone) {
+          console.log(userSocketMap,"this is my map")
           // console.log(fullDocument.assignedUsers,userSocketMap,fullDocument)
           fullDocument.assignedUsers.forEach((user) => {
             io.to(userSocketMap.get(user.clerkId)).emit(

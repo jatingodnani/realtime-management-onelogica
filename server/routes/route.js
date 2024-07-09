@@ -48,7 +48,7 @@ router.post('/api/signin', async (req, res) => {
   try {
     const db = client.db("real");
     const collection = db.collection("realtime-user");
-    let user = await collection.findOne({ clerkId: userId });
+    let user = await collection.findOne({ email: email });
     if (!user) {
       user = {
         clerkId: userId,
