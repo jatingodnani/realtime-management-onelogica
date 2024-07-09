@@ -122,6 +122,7 @@ async function run() {
         if (!fullDocument.everyone) {
           console.log(userSocketMap,"this is my map")
           // console.log(fullDocument.assignedUsers,userSocketMap,fullDocument)
+          
           fullDocument.assignedUsers.forEach((user) => {
             io.to(userSocketMap.get(user.clerkId)).emit(
               "message-recived",

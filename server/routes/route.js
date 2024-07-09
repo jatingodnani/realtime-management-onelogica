@@ -6,7 +6,7 @@ const { ClerkExpressRequireAuth } = require('@clerk/clerk-sdk-node');
 
 
 // Log the CLERK_SECRET_KEY to verify it's loaded correctly
-console.log('CLERK_SECRET_KEY:', process.env.CLERK_SECRET_KEY);
+
 
 const requireAuth = ClerkExpressRequireAuth({
   secretKey: process.env.CLERK_SECRET_KEY

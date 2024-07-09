@@ -74,7 +74,7 @@ function Home() {
       </div>
       <div className='mt-10'>
         {
-          tasks.length>0 ? <TaskTable socket={socket}/> :<div className='w-full  flex-col justify-center items-center'>
+          tasks.length>0 ? <TaskTable socket={socket}/> :<div className='w-full ml-10  flex-col justify-center items-center'>
             <h1 className='font-semibold text-center' >NO TASK CREATED</h1>
             <img src="../../public/Checklist.jpg" style={{width:"50%",height:"50%"}}/>
           </div>
