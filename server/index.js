@@ -11,6 +11,8 @@ const connectDB = require("./mongoconnect");
 const { MongoClient, ObjectId } = require("mongodb");
 const server = createServer(app);
 const client = new MongoClient(process.env.URL);
+const cors = require('cors');
+app.use(cors({ origin: 'http://localhost:5173' }))
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
@@ -18,6 +20,7 @@ const io = new Server(server, {
     credentials: true,
   },
 });
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -46,29 +49,36 @@ io.on("connection", (socket) => {
   //   EVENT : Message
   socket.on("message", async (data) => {
     console.log(data, "this is data");
-
+     
+       let tags;
     try {
       parsedData = typeof data === "string" ? JSON.parse(data) : data;
     } catch (error) {
       console.error("Error parsing data:", error);
       return;
     }
-
+    if(parsedData.addTags.length>0){
+        tags=parsedData.addTags.split(",");
+    }
     const db = client.db("real");
     const collection = db.collection("chat");
     const newTask = {
+      name:parsedData.name,
+      email:parsedData.email,
       userId: parsedData.userId,
       title: parsedData.title,
       description: parsedData.description,
       createdDate: new Date(),
       completed: false,
       everyone:
-        Array.isArray(parsedData.assignedUsers) &&
-        parsedData.assignedUsers.length > 0
+        Array.isArray(parsedData.assignTo) &&
+        parsedData.assignTo.length > 0
           ? false
           : true,
-      assignedUsers: parsedData.assignedUsers || [],
+      assignedUsers: parsedData.assignTo || [],
+      tags:tags|| [],
       roomId: "everyonecanuse",
+      completedBy:"none"
     };
     await collection.insertOne(newTask);
     console.log("Task created:", newTask);
@@ -109,7 +119,7 @@ async function run() {
         console.log("Insert detected:", fullDocument);
         if (!fullDocument.everyone) {
           fullDocument.assignedUsers.forEach((user) => {
-            io.to(userSocketMap.get(user)).emit(
+            io.to(userSocketMap.get(user.clerkId)).emit(
               "message-recived",
               fullDocument
             );
@@ -123,7 +133,7 @@ async function run() {
         console.log("Update detected:", fullDocument);
         if (!fullDocument.everyone) {
           fullDocument.assignedUsers.forEach((user) => {
-            io.to(userSocketMap.get(user)).emit(
+            io.to(userSocketMap.get(user.clerkId)).emit(
               "message-recived",
               fullDocument
             );
