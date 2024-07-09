@@ -1,14 +1,14 @@
-import React, { useMemo, useEffect, useState, useCallback } from 'react';
+import React, { useMemo, useEffect, useState, useCallback, useRef } from 'react';
 import { useTable, useSortBy, useGlobalFilter, usePagination } from 'react-table';
 import axios from 'axios';
-import { format, setDate } from 'date-fns';
+import { format } from 'date-fns';
 import { useUser } from '@clerk/clerk-react';
-import { FaSearch, FaSearchPlus } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 
 const GlobalFilter = ({ filter, setFilter }) => {
   return (
-    <span className="mb-4  flex items-center p-4">
-      <span className='font-bold'><FaSearch/></span>
+    <span className="mb-4 flex items-center p-4">
+      <span className='font-bold'><FaSearch /></span>
       <input
         value={filter || ''}
         onChange={e => setFilter(e.target.value)}
@@ -41,25 +41,18 @@ const createColumns = (handleCompletedChange) => [
     Header: 'Status',
     accessor: 'completed',
     Cell: ({ value, row }) => (
-     row.original.completed ? <div className='bg-green-300 text-green-500
-     font-semibold rounded-xl text-center p-2'>Completed</div>:
-     <label className="relative inline-flex items-center cursor-pointer">
-     <input
-       type="checkbox"
-       className="sr-only peer"
-       checked={value || false}
-       onChange={() => handleCompletedChange(row.original._id, row,!value)}
-     />
-     <div
-       className="w-11 h-6 bg-gray-200
-        peer-focus:outline-none peer-focus:ring-2
-         peer-focus:ring-green-300 rounded-full peer dark:bg-gray-700
-          peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] 
-          after:left-[2px] after:bg-white after:border-gray-300
-           after:border after:rounded-full after:h-5 after:w-5 
-           after:transition-all dark:border-gray-600 peer-checked:bg-green-600"
-     ></div>
-   </label>
+      row.original.completed ? <div className='bg-green-300 text-green-500 font-semibold rounded-xl text-center p-2'>Completed</div> :
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            className="sr-only peer"
+            checked={value || false}
+            onChange={() => handleCompletedChange(row.original._id, row, !value)}
+          />
+          <div
+            className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-300 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"
+          ></div>
+        </label>
     ),
   },
   {
@@ -100,24 +93,23 @@ const createColumns = (handleCompletedChange) => [
   },
 ];
 
-const TaskTable = ({socket}) => {
+const TaskTable = ({ socket }) => {
   const [data, setData] = useState([]);
   const { user } = useUser();
+  const audioRef = useRef(null);
 
-  useEffect(()=>{
-    if(!socket) return;
+  useEffect(() => {
+    if (!socket) return;
     const handleMessageReceived = (datatask) => {
       setData(prev => {
-        
         const exists = prev.some(task => task._id === datatask._id);
         if (exists) {
-          
           return prev.map(task => task._id === datatask._id ? datatask : task);
         } else {
-          
           return [datatask, ...prev];
         }
       });
+      audioRef.current.play();
     };
 
     socket.on("message-recived", handleMessageReceived);
@@ -126,13 +118,15 @@ const TaskTable = ({socket}) => {
     return () => {
       socket.off("message-recived", handleMessageReceived);
     };
-  },[socket,user.id]);
+  }, [socket, user.id]);
+
   const filteredData = useMemo(() => {
-    return data.filter(task => 
-      task.everyone || 
+    return data.filter(task =>
+      task.everyone ||
       (Array.isArray(task.assignedUsers) && task.assignedUsers.some(assignedUser => assignedUser.email === user.primaryEmailAddress.emailAddress))
     );
   }, [data, user.primaryEmailAddress.emailAddress]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -145,16 +139,15 @@ const TaskTable = ({socket}) => {
     fetchData();
   }, []);
 
-
-  const handleCompletedChange = useCallback(async (id,row, completed) => {
-    console.log({...row.original})
+  const handleCompletedChange = useCallback(async (id, row, completed) => {
+    console.log({ ...row.original })
     try {
-     if(!socket) return;
-     socket.emit("task-update",{id, data:{...row.original,completed:true,completedBy:user.firstName}})
+      if (!socket) return;
+      socket.emit("task-update", { id, data: { ...row.original, completed: true, completedBy: user.firstName } });
     } catch (error) {
       console.error('Error updating task:', error);
     }
-  }, [user,socket]);
+  }, [user, socket]);
 
   const columns = useMemo(() => createColumns(handleCompletedChange), [handleCompletedChange]);
 
@@ -175,9 +168,9 @@ const TaskTable = ({socket}) => {
     previousPage,
     setPageSize,
   } = useTable(
-    { 
-      columns, 
-      data:filteredData,
+    {
+      columns,
+      data: filteredData,
       initialState: { pageIndex: 0, pageSize: 8 },
     },
     useGlobalFilter,
@@ -189,6 +182,7 @@ const TaskTable = ({socket}) => {
 
   return (
     <>
+      <audio ref={audioRef} src="/notification.mp3" />
       <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
       <table {...getTableProps()} className="flex-1 overflow-x-hidden min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
@@ -255,7 +249,7 @@ const TaskTable = ({socket}) => {
           }}
           className="ml-2 border rounded"
         >
-          {[8, 16, 24, 32,40,48,56].map(pageSize => (
+          {[8, 16, 24, 32, 40, 48, 56].map(pageSize => (
             <option key={pageSize} value={pageSize}>
               Show {pageSize}
             </option>

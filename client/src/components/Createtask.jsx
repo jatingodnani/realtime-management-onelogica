@@ -72,7 +72,7 @@ const ModalForm = ({ isOpen, onClose, socket }) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50"
+          className="fixed  z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-gray-800 bg-opacity-50"
         >
           <motion.div
             initial={{ y: "-100vh" }}
@@ -92,9 +92,10 @@ const ModalForm = ({ isOpen, onClose, socket }) => {
                   type="text"
                   id="title"
                   name="title"
-                  className="h-[50px] mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="h-[50px] pl-4 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   value={formData.title}
                   onChange={handleChange}
+                  placeholder='Title here...'
                   required
                 />
               </div>
@@ -104,9 +105,10 @@ const ModalForm = ({ isOpen, onClose, socket }) => {
                   id="description"
                   name="description"
                   rows="3"
-                  className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="mt-1 pl-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   value={formData.description}
                   onChange={handleChange}
+                  placeholder='Description here...'
                   required
                 ></textarea>
               </div>
@@ -116,7 +118,7 @@ const ModalForm = ({ isOpen, onClose, socket }) => {
                   type="text"
                   id="assignTo"
                   name="assignTo"
-                  className="h-[50px] mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className="h-[50px] pl-4 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   value={formData.assignTo}
                   onChange={handleChange}
                   placeholder='Add multiple Users eMail using commas'
@@ -141,7 +143,7 @@ const ModalForm = ({ isOpen, onClose, socket }) => {
                   id="addTags"
                   placeholder="Add multiple tags using commas"
                   name="addTags"
-                  className="pr-4 h-[50px] mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className=" h-[50px] pl-4 mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   value={formData.addTags}
                   onChange={handleChange}
                 />
