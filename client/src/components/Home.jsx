@@ -8,18 +8,18 @@ import TaskTable from './TaskTable';
 
 function Home() {
   const { user } = useUser();
-  if (!user) return <div className='flex w-full h-[80%] items-center justify-center'><SignIn /></div>;
+  if (!user) return <div className='flex w-full h-full items-center justify-center'><SignIn /></div>;
   const [socket, setSocket] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { getToken } = useAuth();
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const newSocket = io('https://realtime-management-onelogica.vercel.app');
+    const newSocket = io('http://localhost:8000');
     setSocket(newSocket);
 
     return () => newSocket.close();
@@ -50,14 +50,20 @@ function Home() {
   }, [user, socket]);
 
   useEffect(() => {
-    getAlltask(setTasks, setLoading, setError);
-  }, []);
+    const fetchTasks = async () => {
+      await getAlltask(setTasks, setLoading, setError);
+    };
 
+    fetchTasks();
+  }, []);
+console.log(tasks)
   useEffect(() => {
-    if (user) {
-      signInUser(user.id, user.emailAddresses[0].emailAddress);
-    }
-  }, [user]);
+    console.log(user.id,user.emailAddresses[0].emailAddress,"is it working")
+  if(user){
+      signInUser(user?.id, user?.emailAddresses[0].emailAddress);
+  }
+    
+  },[user]);
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);

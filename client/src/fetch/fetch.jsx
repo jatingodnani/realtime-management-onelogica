@@ -3,7 +3,7 @@ export async function getAlltask(setTasks,setLoading,setError){
         method: "GET",
         redirect: "follow"
       };
-    fetch("https://realtime-management-onelogica.vercel.app/task", requestOptions)
+    fetch("http://localhost:8000/task", requestOptions)
     .then((response) => response.json()) 
     .then((result) => {
        
@@ -27,7 +27,7 @@ export async function fetchSignedInUsers(setsigneduser) {
         redirect: 'follow',
       };
   
-      const response = await fetch('https://realtime-management-onelogica.vercel.app/api/users', requestOptions);
+      const response = await fetch('http://localhost:8000/api/users', requestOptions);
       const users = await response.json();
      console.log(users)
       setsigneduser([...users])
@@ -38,7 +38,7 @@ export async function fetchSignedInUsers(setsigneduser) {
   }
 
 export async function signInUser(userId, email) {
-console.log(userId,email)
+console.log(userId,email,"dnnnfnfn")
 
   try {
    
@@ -50,7 +50,7 @@ console.log(userId,email)
       body: JSON.stringify({ userId, email }),
     };
 
-    const response = await fetch('https://realtime-management-onelogica.vercel.app/api/signin', requestOptions);
+    const response = await fetch('http://localhost:8000/api/signin', requestOptions);
     const result = await response.json();
     console.log('Signed in user:', result);
     return result; 

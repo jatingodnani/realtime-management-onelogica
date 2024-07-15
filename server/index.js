@@ -28,10 +28,10 @@ app.use("/", authval);
 
 let userSocketMap = new Map();
 io.on("connection", (socket) => {
-  console.log(socket.id);
+  // console.log(socket.id);
   // Manual Connection (For Server mapping)
   socket.on("user-connected", (user) => {
-    console.log(user,"user");
+    // console.log(user,"user");
     const userId = user.id;
     userSocketMap.set(userId, socket.id);
     console.log(`User ${userId} connected with socket ${socket.id}`);
@@ -48,7 +48,7 @@ io.on("connection", (socket) => {
   });
   //   EVENT : Message
   socket.on("message", async (data) => {
-    console.log(data, "this is data");
+    // console.log(data, "this is data");
      
        let tags;
     try {
@@ -87,7 +87,7 @@ io.on("connection", (socket) => {
   //   EVENT : Task Update
   socket.on("task-update", async (req) => {
     const { id, data } = req;
-    console.log(id, data);
+    // console.log(id, data);
     const db = client.db("real");
     const collection = db.collection("chat");
     try {
@@ -97,7 +97,7 @@ io.on("connection", (socket) => {
         { _id: new ObjectId(id) },
         { $set: updateData }
       );
-      console.log(result);
+      // console.log(result);
     }  catch (error) {
       console.error("Error updating task:", error);
       socket.emit("update-error", "An error occurred while updating the task");
@@ -112,15 +112,15 @@ async function run() {
     const collection = db.collection("chat");
     const changeStream = collection.watch();
 
-    // MONGO EVENT : CHANGE
+    
     changeStream.on("change", async (change) => {
-      // console.log("Change detected:", change);
+      
       if (change.operationType === "insert") {
         const fullDocument = change.fullDocument;
 
        
         if (!fullDocument.everyone) {
-          console.log(userSocketMap,"this is my map")
+          // console.log(userSocketMap,"this is my map")
           // console.log(fullDocument.assignedUsers,userSocketMap,fullDocument)
           
           fullDocument.assignedUsers.forEach((user) => {
@@ -130,6 +130,7 @@ async function run() {
             );
           });
         } else {
+        
           io.emit("message-recived", fullDocument);
         }
       } else if (change.operationType === "update") {
